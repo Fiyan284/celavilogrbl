@@ -1,0 +1,12 @@
+{
+  "name": "roblox-vilog-local-save",
+  "version": "1.0.0",
+  "description": "Local save server for Roblox Vilog static site",
+  "main": "save-server.js",
+  "scripts": {
+    "start": "node save-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

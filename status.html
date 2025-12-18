@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Akun Roblox</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b0b0b;
+      color: #f2f2f2;
+      padding: 16px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #ffffff;
+    }
+    .card {
+      background: #141414;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.6);
+      border: 2px solid transparent;
+    }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+    .label {
+      color: #9ca3af;
+      min-width: 110px;
+      font-weight: bold;
+    }
+    .value {
+      word-break: break-all;
+    }
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .pending {
+      background: #6b7280;
+    }
+    .proses {
+      background: #2563eb;
+    }
+    .success {
+      background: #16a34a;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 12px;
+      color: #6b7280;
+    }
+    .back-btn {
+      background: #2563eb;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .back-btn:hover {
+      background: #1d4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <button class="back-btn" onclick="window.location.href='https://whatsapp.com/channel/0029Vb6ydOj7tkj3kQBzk81m'">Testimoni</button>
+    <h1>📊 Status VILOG Roblox</h1>
+    <div id="statusList"></div>
+    <div class="footer">© CelaStore</div>
+  </div>
+
+  <script>
+    // Firebase Configuration (sama dengan web_copy_roblox_vilog.html)
+    const firebaseConfig = {
+      apiKey: "AIzaSyBXLu7-X9L6z0z7K7K7K7K7K7K7K7K7K7K",
+      authDomain: "roblox-vilog.firebaseapp.com",
+      databaseURL: "https://roblox-vilog-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "roblox-vilog",
+      storageBucket: "roblox-vilog.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef123456"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Ambil data dari localStorage (backup) atau mulai kosong
+    let data = [];
+    const storedData = localStorage.getItem('robloxAccountsData');
+    if(storedData) {
+      try {
+        data = JSON.parse(storedData);
+      } catch(e) {
+        data = [];
+      }
+    }
+
+    const statusList = document.getElementById('statusList');
+
+    // Render status using data (prefer localStorage if present, otherwise fetch data.json)
+    async function loadAndRenderStatus(){
+      // prefer localStorage edits
+      const stored = localStorage.getItem('robloxAccountsData');
+      if(stored){
+        try{ data = JSON.parse(stored); } catch(e){ data = []; }
+      } else {
+        try{
+          const res = await fetch('data.json', {cache: 'no-cache'});
+          if(res.ok) data = await res.json();
+        }catch(e){ /* ignore */ }
+      }
+
+      statusList.innerHTML = '';
+      if(!data || data.length === 0){
+        statusList.innerHTML = '<p style="text-align: center; color: #9ca3af;">Belum ada data.</p>';
+        return;
+      }
+
+      data.forEach((acc, i) => {
+        const status = localStorage.getItem('status_' + i) || 'pending';
+        const statusText = status === 'success' ? 'Selesai' : status === 'proses' ? 'Proses' : 'Pending';
+        const statusClass = status;
+
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="row">
+            <span class="label">Username</span>
+            <span class="value">${acc.user}</span>
+          </div>
+          <div class="row">
+            <span class="label">Status</span>
+            <span class="status-badge ${statusClass}">${statusText}</span>
+          </div>
+          <div class="row">
+            <span class="label">Robux</span>
+            <span class="value">${acc.rbx}</span>
+          </div>
+        `;
+
+        statusList.appendChild(card);
+      });
+    }
+
+    // initial load
+    loadAndRenderStatus();
+  </script>
+</body>
+</html>
